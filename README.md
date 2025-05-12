@@ -11,3 +11,6 @@ Kesamaan URL "amqp://guest:guest@localhost:5672" pada publisher dan subscriber m
 ### Running RabbitMQ
 
 ![RabbitMQ](./running_rabbitmq.png)
+
+### Running Publisher and Subscriber
+![Publisher and Subscriber](./running_event.png)
