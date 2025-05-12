@@ -7,3 +7,7 @@ Jumlah data yang dikirim oleh publisher ke message broker dalam satu kali proses
 **b. URL “amqp://guest:guest@localhost:5672” sama dengan yang ada di program subscriber, apa artinya?**
 
 Kesamaan URL "amqp://guest:guest@localhost:5672" pada publisher dan subscriber memiliki arti bahwa kedua program publisher dan subscriber dikonfigurasi untuk terhubung ke instance message broker RabbitMQ yang sama. `localhost` menunjukkan bahwa message broker berjalan di mesin yang sama (komputer lokal) dengan publisher dan subscriber, `5672` adalah port standar yang digunakan oleh RabbitMQ untuk koneksi AMQP. Dengan kata lain, baik publisher maupun subscriber menggunakan kredensial default untuk mengakses message broker yang berjalan secara lokal pada port standar. Ini memastikan bahwa message yang dikirim oleh publisher dapat diterima oleh subscriber melalui broker yang sama.
+
+### Running RabbitMQ
+
+![RabbitMQ](./running_rabbitmq.png)
