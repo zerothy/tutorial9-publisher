@@ -30,3 +30,15 @@ Spike atau lonjakan yang terlihat pada grafik RabbitMQ berkaitan langsung dengan
 ### Mengapa Jumlah Antrian (Queue) di RabbitMQ Menunjukkan Angka Tertentu?
 
 Jumlah total queue yang ada di RabbitMQ dapat dipengaruhi oleh beberapa faktor. Pertama, queue dapat dibuat oleh aplikasi kita sendiri, baik publisher maupun subscriber. Library seperti `crosstown_bus` sering membuat queue secara otomatis berdasarkan nama event atau topik. Jika kita menjalankan aplikasi beberapa kali atau mengkonfigurasi antrian sebagai durable dan tidak terhapus otomatis, jumlahnya akan bertambah. Kedua, queue bisa berasal dari eksekusi sebelumnya atau aplikasi lain. Jika instance RabbitMQ telah digunakan untuk proyek lain, queue durable dari sesi tersebut mungkin masih ada. Aplikasi lain di sistem yang menggunakan RabbitMQ juga akan memiliki queue mereka sendiri. Ketiga, beberapa library atau framework AMQP mungkin membuat lebih dari satu queue untuk tujuan tertentu, seperti queue untuk dead-letter messages atau queue sementara untuk komunikasi internal. Keempat, RabbitMQ sendiri atau plugin yang terinstall mungkin membuat beberapa queue untuk keperluan internal, meskipun biasanya jumlahnya tidak signifikan. Terakhir, selama pengembangan dan pengujian, seringkali kita membuat berbagai antrian untuk mencoba konfigurasi berbeda, dan jika tidak dibersihkan, antrian ini akan terakumulasi.
+
+### Spike 3 on RabbitMQ
+
+![Spike 3 on RabbitMQ](./spike3.png)
+
+Ketika kita menjalankan beberapa instance subscriber yang listen ke queue yang sama, RabbitMQ akan mendistribusikan message-message dari queue tersebut kepada subscriber yang aktif, biasanya dalam mode round-robin. Ini berarti setiap subscriber akan mengambil dan memproses sebagian dari total message yang ada di qeue secara bersamaan. Akibatnya, keseluruhan proses message consumption menjadi jauh lebih cepat dibandingkan jika hanya ada satu subscriber. Inilah mengapa spike jumlah message dalam queue di RabbitMQ berkurang lebih cepat. Semakin banyak subscriber yang bekerja secara paralel, semakin cepat queue akan dikosongkan karena beban kerja terbagi di antara mereka. Fenomena ini menunjukkan kemampuan skalabilitas horizontal dari sistem antrian pesan seperti RabbitMQ, di mana kita dapat menambah lebih banyak subscriber untuk meningkatkan throughput dan mengurangi latensi dalam pemrosesan message.
+
+### Potensi Peningkatan Kode
+
+1. Error Handling di Publisher: Saat ini, hasil dari `p.publish_event(...)` diabaikan (`_ = ...`). Dalam real case scenario, penting untuk menghandle kemungkinan kegagalan saat publikasi pesan, misalnya dengan mencatat log error.
+2.  Idempotensi Subscriber: Jika ada kemungkinan sebuah message bisa diproses lebih dari sekali, misalnya karena kegagalan sementara dan pengiriman ulang oleh broker, logika di sisi subscriber sebaiknya dirancang agar idempoten. Artinya, memproses pesan yang sama beberapa kali tidak akan menimbulkan efek samping yang tidak diinginkan.
+
