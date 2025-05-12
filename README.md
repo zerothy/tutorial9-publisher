@@ -14,3 +14,11 @@ Kesamaan URL "amqp://guest:guest@localhost:5672" pada publisher dan subscriber m
 
 ### Running Publisher and Subscriber
 ![Publisher and Subscriber](./running_event.png)
+
+### Spike on RabbitMQ
+
+![Spike on RabbitMQ](./spike.png)
+
+### Analisis Spike pada RabbitMQ
+
+Spike atau lonjakan yang terlihat pada grafik RabbitMQ berkaitan langsung dengan eksekusi program publisher. Ketika program publisher dijalankan, ia mengirimkan 5 pesan ke message broker RabbitMQ dalam waktu yang singkat. Pengiriman pesan secara cepat dan berurutan ini menyebabkan peningkatan tajam dalam jumlah pesan yang masuk dan antri di broker. Interface management RabbitMQ akan menampilkan lonjakan ini pada grafiknya, yang merepresentasikan aktivitas pengiriman pesan yang tiba-tiba meningkat. Lonjakan ini menunjukkan bahwa broker berhasil menerima dan memproses pesan-pesan yang dikirim oleh publisher. Setelah pesan-pesan tersebut dikonsumsi oleh subscriber atau mencapai batas waktu hidupnya, grafik akan kembali normal.
